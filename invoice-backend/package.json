@@ -1,0 +1,23 @@
+{
+  "name": "invoice-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@thiagoelg/node-printer": "^0.6.2",
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "escpos": "^3.0.0-alpha.6",
+    "escpos-serialport": "^3.0.0-alpha.4",
+    "express": "^4.21.2",
+    "nodemon": "^3.1.9",
+    "serialport": "^9.2.8"
+  }
+}
