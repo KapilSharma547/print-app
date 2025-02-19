@@ -1,30 +1,47 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const printer = require("@thiagoelg/node-printer");
+const express = require('express');
+const escpos = require('escpos');
+
+// Change this based on your printer type
+escpos.USB = require('escpos-usb');
 
 const app = express();
-app.use(cors());
-app.use(bodyParser.json());
+const port = 3000;
 
-const PRINTER_NAME = "Thermal_Printer"; // Change if needed
+app.get('/print', (req, res) => {
+  try {
+    // Connect to the USB thermal printer (adjust vendorId and productId)
+    const device = new escpos.USB();
 
-app.post("/print", (req, res) => {
-    const { text } = req.body;
-    if (!text) return res.status(400).json({ error: "No text provided" });
+    const printer = new escpos.Printer(device);
 
-    try {
-        printer.printDirect({
-            data: text,
-            printer: PRINTER_NAME,
-            type: "RAW",
-            success: () => res.json({ message: "Printed successfully!" }),
-            error: (err) => res.status(500).json({ error: err.message }),
+    device.open(function (error) {
+      if (error) {
+        console.error('Failed to open device:', error);
+        return res.status(500).send('Failed to connect to printer');
+      }
+
+      printer
+        .font('a')
+        .align('ct')
+        .style('bu')
+        .size(1, 1)
+        .text('Sample Receipt')
+        .text('Item: Sample Product')
+        .text('Price: $10.00')
+        .text('------------------------')
+        .text('Thank you for shopping!')
+        .cut()
+        .close(() => {
+          console.log('Printed successfully');
+          res.send('Receipt printed successfully');
         });
-    } catch (error) {
-        return res.status(500).json({ error: error.message });
-    }
+    });
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).send('An error occurred');
+  }
 });
 
-const PORT = 5000;
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});
