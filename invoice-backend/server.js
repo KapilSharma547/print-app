@@ -1,23 +1,24 @@
 const express = require('express');
 const escpos = require('escpos');
+const cors = require('cors');
 
-// Change this based on your printer type
+// USB Printer Setup
 escpos.USB = require('escpos-usb');
 
 const app = express();
-const port = 3000;
+const port = 3001;
 
-app.get('/print', (req, res) => {
+app.use(cors()); // Allow requests from frontend
+
+app.get('/print-receipt', (req, res) => {
   try {
-    // Connect to the USB thermal printer (adjust vendorId and productId)
-    const device = new escpos.USB();
-
+    const device = new escpos.USB(); // Automatically detects the USB printer
     const printer = new escpos.Printer(device);
 
-    device.open(function (error) {
-      if (error) {
-        console.error('Failed to open device:', error);
-        return res.status(500).send('Failed to connect to printer');
+    device.open(function (err) {
+      if (err) {
+        console.error('Printer connection error:', err);
+        return res.status(500).send('Printer connection failed');
       }
 
       printer
@@ -25,23 +26,23 @@ app.get('/print', (req, res) => {
         .align('ct')
         .style('bu')
         .size(1, 1)
-        .text('Sample Receipt')
-        .text('Item: Sample Product')
-        .text('Price: $10.00')
+        .text('Admin Panel Receipt')
+        .text('Item: Example Product')
+        .text('Price: $15.00')
         .text('------------------------')
-        .text('Thank you for shopping!')
+        .text('Thank You!')
         .cut()
         .close(() => {
-          console.log('Printed successfully');
-          res.send('Receipt printed successfully');
+          console.log('Receipt Printed Successfully');
+          res.send('Receipt Printed Successfully');
         });
     });
-  } catch (err) {
-    console.error('Error:', err);
-    res.status(500).send('An error occurred');
+  } catch (error) {
+    console.error('Printing Error:', error);
+    res.status(500).send('Printing failed');
   }
 });
 
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+  console.log(`Printer API running at http://localhost:${port}`);
 });

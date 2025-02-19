@@ -1,21 +1,23 @@
 import React from 'react';
+import axios from 'axios';
 
-function ReceiptPrint() {
-  const handlePrint = () => {
-    window.print();
+function AdminPanel() {
+  const printReceipt = async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/print-receipt');
+      alert(response.data);
+    } catch (error) {
+      console.error('Print Error:', error);
+      alert('Failed to print receipt');
+    }
   };
 
   return (
     <div>
-      <div id="receipt">
-        <h1>Receipt</h1>
-        <p>Item: Sample Product</p>
-        <p>Price: $10.00</p>
-        <p>Thank you for your purchase!</p>
-      </div>
-      <button onClick={handlePrint}>Print Receipt</button>
+      <h1>Admin Panel</h1>
+      <button onClick={printReceipt}>Print Receipt</button>
     </div>
   );
 }
 
-export default ReceiptPrint;
+export default AdminPanel;
