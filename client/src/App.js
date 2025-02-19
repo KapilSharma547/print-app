@@ -1,13 +1,21 @@
-// src/App.js
-import React from "react";
-import Invoice from "./components/Invoice";
+import React from 'react';
 
-const App = () => {
+function ReceiptPrint() {
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <div>
-      <Invoice />
+      <div id="receipt">
+        <h1>Receipt</h1>
+        <p>Item: Sample Product</p>
+        <p>Price: $10.00</p>
+        <p>Thank you for your purchase!</p>
+      </div>
+      <button onClick={handlePrint}>Print Receipt</button>
     </div>
   );
-};
+}
 
-export default App;
+export default ReceiptPrint;
